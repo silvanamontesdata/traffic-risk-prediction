@@ -1,12 +1,12 @@
-# Machine Learning for Human Behavior: A Road Safety Case Study
+# Machine Learning for Human Behavior: Predicting Risky Driving and Crash Involvement
 
-**How much does model complexity add when predicting self-reported driving behavior?** This case study applies supervised machine learning to two outcomes in road-safety research. It compares familiar regression baselines with regularized, tree-based and neural-network models under shared cross-validation splits.
+**How much does model complexity add when predicting self-reported driving behavior?** This project applies supervised machine learning to two outcomes in road-safety research. It compares familiar regression baselines with regularized, tree-based and neural-network models under shared cross-validation splits.
 
 ![Mean cross-validated model performance in the two road-safety tasks](figures/model-comparison.png)
 
 ## Data and measures
 
-The analysis uses a restricted road-safety research dataset with 792 participant records. Personality was measured with the Personality Inventory for DSM-5 (PID-5), originally developed by Krueger et al. (2012). Sánchez, Montes, and colleagues (2023) later reported on a shortened and modified version for use in Argentina. The continuous outcome sums 12 self-reported driving-risk behaviors rated from 1 to 5, for a theoretical range of 12–60. It was observed for 777 participants. The classification outcome is self-reported crash involvement as coded in the source study (135 positives among 792). The classification predictors are five personality domains, five driving-style scores (stress reduction excluded) and five specific behaviors (R1–R5): speeding, driving after drinking, distracted driving, phone use and driving while tired. The regression predictors are either 25 personality facets or five domains.
+The analysis uses a restricted road-safety research dataset with 792 participant records. Personality was measured with the Personality Inventory for DSM-5 (PID-5), originally developed by Krueger et al. (2012). Sánchez, Montes, and colleagues (2023) later reported on a shortened and modified version for use in Argentina. The continuous outcome sums 12 self-reported driving-risk behaviors rated from 1 to 5, for a theoretical range of 12–60. It was observed for 777 participants. The classification outcome is self-reported crash involvement as coded in the source study (135 positives among 792). For crash classification, the predictors are five personality domains, five driving-style scores and five specific risky driving behaviors: speeding, driving after drinking, distracted driving, phone use and driving while tired. For regression on the risk-behavior score, the analysis compares 25 personality facets with five domains as alternative predictor sets.
 
 ## What did the models learn?
 
@@ -18,9 +18,11 @@ The analysis uses a restricted road-safety research dataset with 792 participant
 | Recorded crash involvement | Logistic regression | ROC-AUC .616 · AP .268 |
 | Recorded crash involvement | Decision tree | ROC-AUC .568 · AP .205 |
 | Recorded crash involvement | Random Forest | ROC-AUC .591 · AP .240 |
-| Recorded crash involvement | Multilayer perceptron | ROC-AUC .579 · AP .235 |
+| Recorded crash involvement | Neural network (multilayer perceptron) | ROC-AUC .579 · AP .235 |
 
-The forest reduced error by about **0.10 score points** relative to ordinary linear regression with 25 facets. The mean-only reference had MAE 5.71. Crash involvement was harder to discriminate. Logistic regression had the highest observed mean ROC-AUC (.616) and average precision (.268). The prevalence was .170, a reference for AP. These are descriptive differences from internal validation in a previously explored sample. The crash outcome is retrospective and the analysis does not evaluate prediction of future crashes.
+The forest reduced error by about **0.10 score points** relative to ordinary linear regression with 25 facets. The mean-only reference had MAE 5.71. Crash involvement was harder to discriminate. Logistic regression had the highest observed mean ROC-AUC (.616) and average precision (.268). These are descriptive differences from internal validation in a previously explored sample. The crash outcome is retrospective and the analysis does not evaluate prediction of future crashes.
+
+**How to read AP.** Average precision summarizes how well a model ranks participants with recorded crash involvement near the top across classification thresholds. It ranges from 0 to 1, with 1 indicating perfect ranking. A constant score gives an AP equal to the positive-class prevalence, about .170 here. The observed values (.205–.268) show modest gains over that reference.
 
 [Decision tree](figures/decision-tree.png) · [Correlation heatmap](figures/correlation-heatmap.png)
 
