@@ -59,6 +59,19 @@ class_models={
  'Random Forest':Pipeline([('impute',SimpleImputer(strategy='mean')),('model',RandomForestClassifier(n_estimators=500,max_depth=10,class_weight='balanced',random_state=SEED,n_jobs=1))]),
  'MLP':Pipeline([('impute',SimpleImputer(strategy='mean')),('scale',StandardScaler()),('model',MLPClassifier(hidden_layer_sizes=(10,5),max_iter=5000,alpha=.001,random_state=SEED))])}
 from sklearn.base import clone
+from sklearn.inspection import permutation_importance
+
+
+def held_out_importance(model, predictors, outcome, fold, scoring):
+    result = permutation_importance(
+        model, predictors, outcome, scoring=scoring, n_repeats=12,
+        random_state=SEED + fold,
+    )
+    return pd.Series(result.importances_mean, index=predictors.columns)
+
+
+crash_importances = []
+risk_importances = []
 classification_rows=[];oof_class={};class_warnings=[]
 for name,pipe in class_models.items():
     oof=np.full(len(yc),np.nan)
@@ -67,6 +80,10 @@ for name,pipe in class_models.items():
         with warnings.catch_warnings(record=True) as caught:
             warnings.simplefilter('always');fit.fit(Xc.iloc[tr],yc.iloc[tr])
         for w in caught:class_warnings.append({'modelo':name,'fold':fold,'categoría':w.category.__name__,'mensaje':str(w.message)})
+        if name == 'Logística':
+            crash_importances.append(held_out_importance(
+                fit, Xc.iloc[te], yc.iloc[te], fold, 'roc_auc'
+            ))
         proba=fit.predict_proba(Xc.iloc[te])[:,1];oof[te]=proba
         classification_rows.append({'modelo':name,'fold':fold,'N_train':len(tr),'N_test':len(te),'AUC':roc_auc_score(yc.iloc[te],proba),'AP':average_precision_score(yc.iloc[te],proba),'Brier':brier_score_loss(yc.iloc[te],proba),'balanced_accuracy':balanced_accuracy_score(yc.iloc[te],proba>=.5)})
     assert np.isfinite(oof).all();oof_class[name]=oof
@@ -87,6 +104,10 @@ for representation,cols in [('Dominios',domains),('Facetas',facets)]:
             with warnings.catch_warnings(record=True) as caught:
                 warnings.simplefilter('always');fit.fit(Xr.iloc[tr][cols],yr.iloc[tr])
             for w in caught:reg_warnings.append({'representación':representation,'modelo':name,'fold':fold,'mensaje':str(w.message)})
+            if representation == 'Facetas' and name == 'Random Forest':
+                risk_importances.append(held_out_importance(
+                    fit, Xr.iloc[te][cols], yr.iloc[te], fold, 'neg_mean_absolute_error'
+                ))
             pred=fit.predict(Xr.iloc[te][cols]);oof[te]=pred
             reg_rows.append({'representación':representation,'modelo':name,'fold':fold,'N_train':len(tr),'N_test':len(te),'R2':r2_score(yr.iloc[te],pred),'RMSE':np.sqrt(mean_squared_error(yr.iloc[te],pred)),'MAE':mean_absolute_error(yr.iloc[te],pred)})
         assert np.isfinite(oof).all();reg_oof[(representation,name)]=oof
@@ -98,14 +119,29 @@ regression_folds.to_csv(root / 'results/regression-folds.csv', index=False)
 classification_summary.to_csv(root / 'results/classification-summary.csv')
 regression_summary.to_csv(root / 'results/regression-summary.csv')
 
+for task, importances, metric in [
+    ('Crash involvement', crash_importances, 'ROC-AUC decrease'),
+    ('Risky-driving score', risk_importances, 'MAE increase'),
+]:
+    fold_scores = pd.DataFrame(importances)
+    summary = pd.DataFrame({
+        'mean_change': fold_scores.mean(),
+        'fold_sd': fold_scores.std(),
+        'positive_folds': fold_scores.gt(0).sum(),
+    }).sort_values('mean_change', ascending=False)
+    summary.insert(0, 'metric', metric)
+    summary.index.name = 'predictor'
+    filename = 'crash-importance.csv' if task == 'Crash involvement' else 'risk-importance.csv'
+    summary.to_csv(root / 'results' / filename)
+
 fig, axes = plt.subplots(1, 2, figsize=(9.8, 4.3), layout='constrained')
 specs = [
-    (axes[0], regression_summary.loc['Facetas']['R2']['mean'],
-     ['Lineal', 'Elastic Net', 'Random Forest'], ['Linear', 'Elastic Net', 'Random Forest'],
-     'Risk-behavior score', 'Mean fold R²', 0, (.0, .33)),
-    (axes[1], classification_summary['AUC']['mean'],
+    (axes[0], classification_summary['AUC']['mean'],
      ['Logística', 'Árbol', 'Random Forest', 'MLP'], ['Logistic', 'Tree', 'Random Forest', 'MLP'],
      'Recorded crash involvement', 'Mean fold ROC-AUC', .5, (.45, .69)),
+    (axes[1], regression_summary.loc['Facetas']['R2']['mean'],
+     ['Lineal', 'Elastic Net', 'Random Forest'], ['Linear', 'Elastic Net', 'Random Forest'],
+     'Risk-behavior score', 'Mean fold R²', 0, (.0, .33)),
 ]
 for ax, series, keys, names, title, xlabel, baseline, limits in specs:
     values = series.loc[keys].values
@@ -117,7 +153,7 @@ for ax, series, keys, names, title, xlabel, baseline, limits in specs:
     for y, val in enumerate(values):
         ax.annotate(f'{val:.3f}', (val, y), xytext=(7, 0), textcoords='offset points', va='center')
 fig.suptitle('How much does model complexity add?', fontsize=16, weight='bold')
-fig.savefig(root / 'figures/model-comparison.png', dpi=170)
+fig.savefig(root / 'figures/model-comparison.png', dpi=145)
 plt.close(fig)
 
 # Descriptive correlation matrix for the same five styles and five domains.

@@ -2,7 +2,7 @@
 
 **Do more complex models improve performance on road-safety research data?** This project compares regression baselines with regularized, tree-based and neural-network models under shared cross-validation splits. The two tasks are estimating a self-reported risky-driving score and classifying retrospective reports of crash involvement.
 
-![Mean cross-validated model performance in the two road-safety tasks](figures/model-comparison.png)
+![Mean cross-validated performance for recorded crash involvement (left) and the risky-driving score (right)](figures/model-comparison.png)
 
 ## Data and measures
 
@@ -46,6 +46,16 @@ Disinhibition was the first split. The tree then used dissociative driving style
 | Random Forest | **.255** | **4.76** |
 
 The forest reduced mean absolute error by about **0.10 score points** relative to ordinary linear regression. The mean-only reference had an error of 5.71 points. R² and error refer to predictions of the total score.
+
+## Which predictors contributed most?
+
+For **recorded crash involvement**, the logistic regression's mean ROC-AUC decreased most when distracted driving was shuffled (**.047**), followed by risky driving style (**.023**) and the PID-5 domain antagonism (**.022**). The model used personality domains, driving styles and specific driving behaviors.
+
+For the **total risky-driving score**, the Random Forest used the 25 PID-5 facets. Shuffling risk taking (`desiar`), deceitfulness (`anteng`) and distractibility (`desidis`) increased mean absolute error by **0.30**, **0.20** and **0.16** score points, respectively. For these three facets, the average effect was positive in all five folds.
+
+These exploratory estimates average 12 permutations per predictor on each of the five held-out folds. Correlated predictors can share or substitute for information, so each value reflects the fitted model's reliance on that predictor in the presence of the others.
+
+[Crash predictor importance](results/crash-importance.csv) · [Risky-driving facet importance](results/risk-importance.csv)
 
 ## Evaluation and reproducibility
 
