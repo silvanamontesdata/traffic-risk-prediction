@@ -120,7 +120,7 @@ classification_summary.to_csv(root / 'results/classification-summary.csv')
 regression_summary.to_csv(root / 'results/regression-summary.csv')
 
 for task, importances, metric in [
-    ('Crash involvement', crash_importances, 'ROC-AUC decrease'),
+    ('Self-reported crash involvement', crash_importances, 'ROC-AUC decrease'),
     ('Risky-driving score', risk_importances, 'MAE increase'),
 ]:
     fold_scores = pd.DataFrame(importances)
@@ -131,14 +131,14 @@ for task, importances, metric in [
     }).sort_values('mean_change', ascending=False)
     summary.insert(0, 'metric', metric)
     summary.index.name = 'predictor'
-    filename = 'crash-importance.csv' if task == 'Crash involvement' else 'risk-importance.csv'
+    filename = 'crash-importance.csv' if task == 'Self-reported crash involvement' else 'risk-importance.csv'
     summary.to_csv(root / 'results' / filename)
 
 fig, axes = plt.subplots(1, 2, figsize=(9.8, 4.3), layout='constrained')
 specs = [
     (axes[0], classification_summary['AUC']['mean'],
      ['Logística', 'Árbol', 'Random Forest', 'MLP'], ['Logistic', 'Tree', 'Random Forest', 'MLP'],
-     'Recorded crash involvement', 'Mean fold ROC-AUC', .5, (.45, .69)),
+     'Self-reported crash involvement', 'Mean fold ROC-AUC', .5, (.45, .69)),
     (axes[1], regression_summary.loc['Facetas']['R2']['mean'],
      ['Lineal', 'Elastic Net', 'Random Forest'], ['Linear', 'Elastic Net', 'Random Forest'],
      'Risk-behavior score', 'Mean fold R²', 0, (.0, .33)),
@@ -194,7 +194,7 @@ feature_labels.update(zip(styles + domains, [
 tree_labels = [feature_labels[column] for column in Xc.columns]
 plot_tree(tree, ax=ax, feature_names=tree_labels, class_names=['No', 'Yes'],
           filled=True, rounded=True, impurity=False, precision=2, fontsize=9)
-ax.set_title(f'Recorded crash involvement · trained on {len(train)} participants')
+ax.set_title(f'Self-reported crash involvement · trained on {len(train)} participants')
 fig.savefig(root / 'figures/decision-tree.png', dpi=110, bbox_inches='tight')
 plt.close(fig)
 print(classification_summary.round(4))
