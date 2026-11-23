@@ -12,25 +12,25 @@ The analysis uses a restricted road-safety research dataset with 792 participant
 
 ### 1. Self-reported crash involvement (binary classification)
 
-- **Outcome.** Retrospective self-report of crash involvement, coded yes or no in the source study (135 yes responses among 792 participants).
+- **Outcome.** Self-reported involvement as a driver in at least one traffic event during the previous 12 months. The positive category includes collisions with another vehicle, collisions with a fixed object or stationary vehicle, collisions with a pedestrian or cyclist, loss of vehicle control, and other reported events. Blank responses were coded as no according to the questionnaire instructions. Of 792 participants, 240 (30.3%) reported an event.
 - **Predictors.** Five PID-5 personality domains, five driving-style scores and five specific behaviors: speeding, driving after drinking, distracted driving, phone use and driving while tired.
 
 | Model | ROC-AUC (mean ± SD) | Average precision (mean ± SD) |
 |---|---:|---:|
-| Logistic regression | .616 ± .065 | .268 ± .064 |
-| Decision tree | .568 ± .029 | .205 ± .012 |
-| Random Forest | .591 ± .049 | .240 ± .043 |
-| Neural network (multilayer perceptron) | .579 ± .029 | .235 ± .035 |
+| Logistic regression | .625 ± .044 | .446 ± .062 |
+| Decision tree | .583 ± .036 | .369 ± .030 |
+| Random Forest | .637 ± .042 | .443 ± .062 |
+| Neural network (multilayer perceptron) | .586 ± .036 | .398 ± .022 |
 
-Discrimination was modest. Logistic regression had the highest observed mean ROC-AUC and average precision in five-fold cross-validation. These are descriptive differences from internal validation in a previously explored sample. Crash involvement was reported retrospectively. Predictors and outcomes share a self-report method, which may affect the estimated relationships. The models classify past reports and are intended for research and demonstration purposes. Individual risk assessment and selection are outside their scope.
+Discrimination was modest. Random Forest had the highest observed mean ROC-AUC (.637), and logistic regression had the highest mean average precision (.446). The difference in ROC-AUC between the two was .012. These are descriptive differences from internal validation in a previously explored sample. Crash involvement was reported retrospectively. Predictors and outcomes share a self-report method, which may affect the estimated relationships. The models classify past reports and are intended for research and demonstration purposes. Individual risk assessment and selection are outside their scope.
 
-**How to read AP.** Average precision summarizes how well a model ranks participants with self-reported crash involvement near the top across classification thresholds. It ranges from 0 to 1, with 1 indicating perfect ranking. A constant score gives an AP equal to the positive-class prevalence, about .170 here. The observed values (.205–.268) show modest gains over that reference.
+**How to read AP.** Average precision summarizes how well a model ranks participants with self-reported crash involvement near the top across classification thresholds. It ranges from 0 to 1, with 1 indicating perfect ranking. A constant score gives an AP equal to the positive-class prevalence, about .303 here. The observed values (.369–.446) show modest gains over that reference.
 
 #### How to read the decision tree
 
-For the illustrated tree, a stratified 70/30 split assigned 554 participants to training and 238 to testing. Imputation and tree fitting used the training data. Its ROC-AUC on the held-out test was .566.
+For the illustrated tree, a stratified 70/30 split assigned 554 participants to training and 238 to testing. Imputation and tree fitting used the training data. Its ROC-AUC on the held-out test was .552.
 
-Disinhibition was the first split. The tree then used dissociative driving style for one subgroup and risky driving style for the other. These branches show how this particular fit combined personality and driving-style information to classify crash history.
+Aggressive driving style was the first split. The tree then used careful driving style for one subgroup and disinhibition for the other. These branches show how this particular fit combined personality and driving-style information to classify crash history.
 
 [Decision tree](figures/decision-tree.png) · [Pearson correlations between driving styles and PID-5 domains](figures/correlation-heatmap.png)
 
@@ -49,7 +49,7 @@ The forest reduced mean absolute error by about 0.10 score points relative to or
 
 ## Which predictors contributed most?
 
-For **self-reported crash involvement**, the logistic regression's mean ROC-AUC decreased most when distracted driving was shuffled (**.047**), followed by risky driving style (**.023**) and the PID-5 domain antagonism (**.022**). The model used personality domains, driving styles and specific driving behaviors.
+For **self-reported crash involvement**, the logistic regression's mean ROC-AUC decreased most when distracted driving was shuffled (**.015**), followed by speeding (**.011**) and driving after drinking (**.010**). The model used personality domains, driving styles and specific driving behaviors.
 
 For the **total risky-driving score**, the Random Forest used the 25 PID-5 facets. Shuffling risk taking, deceitfulness and distractibility increased mean absolute error by **0.30**, **0.20** and **0.16** score points, respectively. For these three facets, the average effect was positive in all five folds.
 

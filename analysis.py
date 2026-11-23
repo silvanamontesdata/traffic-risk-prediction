@@ -41,10 +41,8 @@ for col in numeric_cols:
     converted=pd.to_numeric(df[col].str.replace(',','.',regex=False),errors='coerce')
     audit.append({'variable':col,'faltantes_entrada':int((~before).sum()),'no_convertibles':int((before & converted.isna()).sum()),'faltantes_final':int(converted.isna().sum())})
     df[col]=converted.astype(float)
-labels=df['st_si_no'].map(lambda x: canon(x) if pd.notna(x) else None)
-unknown=labels.notna() & ~labels.isin(['si','no'])
-assert not unknown.any(), 'Categorías desconocidas en ST_SI_NO'
-y_class=labels.map({'si':1,'no':0}).astype(float)
+# A blank response to question 7 indicates no reported event.
+y_class = df['stnueva'].notna().astype(int)
 
 specific_behaviors = [
     'r1_excedervelocidad', 'r2_alcohol', 'r3_distraido',
