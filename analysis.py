@@ -137,7 +137,20 @@ plt.close(fig)
 # Illustration: refit the same depth-limited classifier on all available rows.
 tree = clone(class_models['Árbol']).fit(Xc, yc).named_steps['model']
 fig, ax = plt.subplots(figsize=(18, 7))
-plot_tree(tree, ax=ax, feature_names=list(Xc.columns), class_names=['No', 'Yes'],
+behavior_labels = [
+    'Speeding', 'Driving after drinking', 'Distracted driving', 'Phone use',
+    'Driving while tired', 'Multitasking', 'Running a red light', 'Dangerous maneuver',
+    'Seat belt / helmet non-use', 'Not slowing at corners', 'Traffic-rule violation',
+    'Aggressive driving (item)',
+]
+feature_labels = {f'r{i}': label for i, label in enumerate(behavior_labels, 1)}
+feature_labels.update(zip(styles + domains, [
+    'Risky driving style', 'Dissociative driving style', 'Aggressive driving style',
+    'Careful driving style', 'Anxious driving style', *heatmap_labels[5:],
+]))
+tree_labels = [feature_labels[column.split('_')[0]] if column in behaviors
+               else feature_labels[column] for column in Xc.columns]
+plot_tree(tree, ax=ax, feature_names=tree_labels, class_names=['No', 'Yes'],
           filled=True, rounded=True, impurity=False, precision=2, fontsize=9)
 ax.set_title('Decision tree for recorded crash involvement · full-sample illustration')
 fig.savefig(root / 'figures/decision-tree.png', dpi=160, bbox_inches='tight')
