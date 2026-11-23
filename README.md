@@ -1,4 +1,4 @@
-# Machine Learning for Human Behavior: Comparing Models in Road Safety
+# Machine Learning for Human Behavior: Model Comparison with a Road Safety Application
 
 **Do more complex models improve performance on road-safety research data?** This project compares regression baselines with regularized, tree-based and neural-network models under shared cross-validation splits. The two tasks are estimating a self-reported risky-driving score and classifying retrospective reports of crash involvement. **More complex models showed no clear advantage over the linear baselines in this sample.**
 
@@ -22,13 +22,13 @@ The analysis uses a restricted road-safety research dataset with 792 participant
 | Random Forest | .637 ± .042 | .443 ± .062 |
 | Neural network (multilayer perceptron) | .586 ± .036 | .398 ± .022 |
 
-Discrimination was modest. Random Forest had the highest observed mean ROC-AUC (.637), and logistic regression had the highest mean average precision (.446). The difference in ROC-AUC between the two was .012. These are descriptive differences from internal validation in a previously explored sample. Crash involvement was reported retrospectively. Predictors and outcomes share a self-report method, which may affect the estimated relationships. The models classify past reports and are intended for research and demonstration purposes. Individual risk assessment and selection are outside their scope.
+Discrimination was modest. Random Forest had the highest observed mean ROC-AUC (.637), and logistic regression had the highest mean average precision (.446). The difference in ROC-AUC between the two was .012. These are descriptive differences from internal validation. The same dataset had been used in earlier analyses. Crash involvement was reported retrospectively. Predictors and outcomes share a self-report method, which may affect the estimated relationships. The models classify past reports and are intended for research and demonstration purposes. Individual risk assessment and selection are outside their scope.
 
-**How to read AP.** Average precision summarizes how well a model ranks participants with self-reported crash involvement near the top across classification thresholds. It ranges from 0 to 1, with 1 indicating perfect ranking. A constant score gives an AP equal to the positive-class prevalence, about .303 here. The observed values (.369–.446) show modest gains over that reference.
+**How to read AP.** Average precision summarizes how well a model ranks participants with self-reported crash involvement near the top across classification thresholds. It ranges from 0 to 1, with 1 indicating perfect ranking. A constant score gives an AP equal to the positive-class prevalence, about .303 here. Mean AP ranged from .369 to .446, about .07 to .14 above that reference.
 
 #### How to read the decision tree
 
-For the illustrated tree, a stratified 70/30 split assigned 554 participants to training and 238 to testing. Imputation and tree fitting used the training data. Its ROC-AUC on the held-out test was .552.
+For the illustrated tree, a stratified 70/30 split assigned 554 participants to training and 238 to testing. Imputation and tree fitting used the training data. Its ROC-AUC on the held-out test was .552, indicating limited discrimination. The tree is shown to illustrate how the fitted model makes splits.
 
 Aggressive driving style was the first split. The tree then used careful driving style for one subgroup and disinhibition for the other. These branches show how this particular fit combined personality and driving-style information to classify crash history.
 
@@ -49,7 +49,7 @@ The forest reduced mean absolute error by about 0.10 score points relative to or
 
 ## Which predictors contributed most?
 
-For **self-reported crash involvement**, the logistic regression's mean ROC-AUC decreased most when distracted driving was shuffled (**.015**), followed by speeding (**.011**) and driving after drinking (**.010**). The model used personality domains, driving styles and specific driving behaviors.
+For **self-reported crash involvement**, the logistic regression's mean ROC-AUC decreased on average when distracted driving (.015), speeding (.011) or driving after drinking (.010) was shuffled. The decrease was positive in four of five folds for distracted driving and speeding, and in all five folds for driving after drinking. The gaps between these average decreases were small relative to their variability across folds, so the ordering is descriptive. The model used personality domains, driving styles and specific driving behaviors.
 
 For the **total risky-driving score**, the Random Forest used the 25 PID-5 facets. Shuffling risk taking, deceitfulness and distractibility increased mean absolute error by **0.30**, **0.20** and **0.16** score points, respectively. For these three facets, the average effect was positive in all five folds.
 
