@@ -22,7 +22,7 @@ The analysis uses a restricted road-safety research dataset with 792 participant
 | Random Forest | .591 ± .049 | .240 ± .043 |
 | Neural network (multilayer perceptron) | .579 ± .029 | .235 ± .035 |
 
-Discrimination was modest. Logistic regression had the highest observed mean ROC-AUC and average precision in five-fold cross-validation. These are descriptive differences from internal validation in a previously explored sample. Crash involvement was reported retrospectively. Predictors and outcomes share a self-report method, which may affect the estimated relationships. The models classify past reports and are intended for research and portfolio demonstration. Individual risk assessment and selection are outside their scope.
+Discrimination was modest. Logistic regression had the highest observed mean ROC-AUC and average precision in five-fold cross-validation. These are descriptive differences from internal validation in a previously explored sample. Crash involvement was reported retrospectively. Predictors and outcomes share a self-report method, which may affect the estimated relationships. The models classify past reports and are intended for research and demonstration purposes. Individual risk assessment and selection are outside their scope.
 
 **How to read AP.** Average precision summarizes how well a model ranks participants with self-reported crash involvement near the top across classification thresholds. It ranges from 0 to 1, with 1 indicating perfect ranking. A constant score gives an AP equal to the positive-class prevalence, about .170 here. The observed values (.205–.268) show modest gains over that reference.
 
@@ -51,7 +51,7 @@ The forest reduced mean absolute error by about 0.10 score points relative to or
 
 For **self-reported crash involvement**, the logistic regression's mean ROC-AUC decreased most when distracted driving was shuffled (**.047**), followed by risky driving style (**.023**) and the PID-5 domain antagonism (**.022**). The model used personality domains, driving styles and specific driving behaviors.
 
-For the **total risky-driving score**, the Random Forest used the 25 PID-5 facets. Shuffling risk taking (`desiar`), deceitfulness (`anteng`) and distractibility (`desidis`) increased mean absolute error by **0.30**, **0.20** and **0.16** score points, respectively. For these three facets, the average effect was positive in all five folds.
+For the **total risky-driving score**, the Random Forest used the 25 PID-5 facets. Shuffling risk taking, deceitfulness and distractibility increased mean absolute error by **0.30**, **0.20** and **0.16** score points, respectively. For these three facets, the average effect was positive in all five folds.
 
 These exploratory estimates average 12 permutations per predictor on each of the five held-out folds. Correlated predictors can share or substitute for information, so each value reflects the fitted model's reliance on that predictor in the presence of the others.
 
@@ -59,7 +59,7 @@ These exploratory estimates average 12 permutations per predictor on each of the
 
 ## Evaluation and reproducibility
 
-Each task uses five shared folds, stratified for classification. Mean imputation and scaling, where applicable, are fitted inside the training folds. Hyperparameters were fixed for this comparison, with a mix of defaults and explicitly chosen settings. The comparison used the settings in the analysis script without hyperparameter search. The random seed was 42. The classification output also includes Brier score and balanced accuracy at a threshold of 0.5. The tables report mean ± standard deviation across folds. The standard deviations summarize variation across splits. The differences between model means remain descriptive.
+Each task uses five shared folds, stratified for classification. Mean imputation and scaling, where applicable, are fitted inside the training folds. Hyperparameters were fixed in advance using defaults and explicitly chosen settings, with no hyperparameter search. The random seed was 42. The classification output also includes Brier score and balanced accuracy at a threshold of 0.5. The tables report mean ± standard deviation across folds. The standard deviations describe fold-to-fold variability. Uncertainty in the differences between models was not estimated.
 
 Internal cross-validation estimates performance on held-out subsets of the same study sample. External validation would test the models on an independent dataset and was beyond the scope of this analysis.
 
