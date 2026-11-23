@@ -5,7 +5,7 @@ import pandas as pd
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from sklearn.model_selection import StratifiedKFold, KFold
+from sklearn.model_selection import StratifiedKFold, KFold, train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler
@@ -46,7 +46,11 @@ unknown=labels.notna() & ~labels.isin(['si','no'])
 assert not unknown.any(), 'Categorías desconocidas en ST_SI_NO'
 y_class=labels.map({'si':1,'no':0}).astype(float)
 
-crash_features = behaviors + styles + domains
+specific_behaviors = [
+    'r1_excedervelocidad', 'r2_alcohol', 'r3_distraido',
+    'r4_celular', 'r5_cansado_maldormido',
+]
+crash_features = specific_behaviors + styles + domains
 valid=y_class.notna(); Xc=df.loc[valid,crash_features];yc=y_class.loc[valid].astype(int)
 folds=list(StratifiedKFold(n_splits=5,shuffle=True,random_state=SEED).split(Xc,yc))
 class_models={
@@ -134,26 +138,28 @@ for (row, col), value in np.ndenumerate(correlations):
 fig.savefig(root / 'figures/correlation-heatmap.png', dpi=170)
 plt.close(fig)
 
-# Illustration: refit the same depth-limited classifier on all available rows.
-tree = clone(class_models['Árbol']).fit(Xc, yc).named_steps['model']
+# Reproduce the illustrative 70/30 split independently of the five-fold comparison.
+train, test = train_test_split(np.arange(len(yc)), test_size=.30, stratify=yc, random_state=SEED)
+holdout_model = clone(class_models['Árbol']).fit(Xc.iloc[train], yc.iloc[train])
+holdout_auc = roc_auc_score(yc.iloc[test], holdout_model.predict_proba(Xc.iloc[test])[:, 1])
+pd.DataFrame([{'N_train': len(train), 'N_test': len(test), 'AUC': holdout_auc}]).to_csv(
+    root / 'results/tree-holdout.csv', index=False
+)
+tree = holdout_model.named_steps['model']
 fig, ax = plt.subplots(figsize=(18, 7))
-behavior_labels = [
+feature_labels = dict(zip(specific_behaviors, [
     'Speeding', 'Driving after drinking', 'Distracted driving', 'Phone use',
-    'Driving while tired', 'Multitasking', 'Running a red light', 'Dangerous maneuver',
-    'Seat belt / helmet non-use', 'Not slowing at corners', 'Traffic-rule violation',
-    'Aggressive driving (item)',
-]
-feature_labels = {f'r{i}': label for i, label in enumerate(behavior_labels, 1)}
+    'Driving while tired',
+]))
 feature_labels.update(zip(styles + domains, [
     'Risky driving style', 'Dissociative driving style', 'Aggressive driving style',
     'Careful driving style', 'Anxious driving style', *heatmap_labels[5:],
 ]))
-tree_labels = [feature_labels[column.split('_')[0]] if column in behaviors
-               else feature_labels[column] for column in Xc.columns]
+tree_labels = [feature_labels[column] for column in Xc.columns]
 plot_tree(tree, ax=ax, feature_names=tree_labels, class_names=['No', 'Yes'],
           filled=True, rounded=True, impurity=False, precision=2, fontsize=9)
-ax.set_title('Decision tree for recorded crash involvement · full-sample illustration')
-fig.savefig(root / 'figures/decision-tree.png', dpi=160, bbox_inches='tight')
+ax.set_title(f'Recorded crash involvement · trained on {len(train)} participants')
+fig.savefig(root / 'figures/decision-tree.png', dpi=110, bbox_inches='tight')
 plt.close(fig)
 print(classification_summary.round(4))
 print(regression_summary.round(4))

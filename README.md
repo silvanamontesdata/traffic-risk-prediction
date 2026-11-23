@@ -6,7 +6,7 @@
 
 ## Data and measures
 
-The analysis uses a restricted road-safety research dataset with 792 participant records. Personality was measured with the Personality Inventory for DSM-5 (PID-5), originally developed by Krueger et al. (2012). Sánchez, Montes, and colleagues (2023) later reported on a shortened and modified version for use in Argentina. The continuous outcome sums 12 self-reported driving-risk behaviors rated from 1 to 5, for a theoretical range of 12–60. It was observed for 777 participants. The classification outcome is self-reported crash involvement as coded in the source study (135 positives among 792). The classification predictors are five personality domains, five driving-style scores (stress reduction excluded) and the 12 behavior items. The regression predictors are either 25 personality facets or five domains.
+The analysis uses a restricted road-safety research dataset with 792 participant records. Personality was measured with the Personality Inventory for DSM-5 (PID-5), originally developed by Krueger et al. (2012). Sánchez, Montes, and colleagues (2023) later reported on a shortened and modified version for use in Argentina. The continuous outcome sums 12 self-reported driving-risk behaviors rated from 1 to 5, for a theoretical range of 12–60. It was observed for 777 participants. The classification outcome is self-reported crash involvement as coded in the source study (135 positives among 792). The classification predictors are five personality domains, five driving-style scores (stress reduction excluded) and five specific behaviors (R1–R5): speeding, driving after drinking, distracted driving, phone use and driving while tired. The regression predictors are either 25 personality facets or five domains.
 
 ## What did the models learn?
 
@@ -15,16 +15,16 @@ The analysis uses a restricted road-safety research dataset with 792 participant
 | Risk-behavior score, 25 facets | Linear regression | R² .237 · MAE 4.86 |
 | Risk-behavior score, 25 facets | Elastic Net | R² .251 · MAE 4.82 |
 | Risk-behavior score, 25 facets | Random Forest | R² .255 · MAE 4.76 |
-| Recorded crash involvement | Logistic regression | ROC-AUC .594 · AP .250 |
-| Recorded crash involvement | Decision tree | ROC-AUC .580 · AP .214 |
-| Recorded crash involvement | Random Forest | ROC-AUC .601 · AP .256 |
-| Recorded crash involvement | Multilayer perceptron | ROC-AUC .554 · AP .245 |
+| Recorded crash involvement | Logistic regression | ROC-AUC .616 · AP .268 |
+| Recorded crash involvement | Decision tree | ROC-AUC .568 · AP .205 |
+| Recorded crash involvement | Random Forest | ROC-AUC .591 · AP .240 |
+| Recorded crash involvement | Multilayer perceptron | ROC-AUC .579 · AP .235 |
 
-The forest reduced error by about **0.10 score points** relative to ordinary linear regression with 25 facets. The mean-only reference had MAE 5.71. Crash involvement was harder to discriminate. The forest and logistic regression differed by about .007 ROC-AUC and .006 AP. The prevalence was .170, a reference for AP. These are descriptive differences from internal validation in a previously explored sample. The crash outcome is retrospective and the analysis does not evaluate prediction of future crashes.
+The forest reduced error by about **0.10 score points** relative to ordinary linear regression with 25 facets. The mean-only reference had MAE 5.71. Crash involvement was harder to discriminate. Logistic regression had the highest observed mean ROC-AUC (.616) and average precision (.268). The prevalence was .170, a reference for AP. These are descriptive differences from internal validation in a previously explored sample. The crash outcome is retrospective and the analysis does not evaluate prediction of future crashes.
 
 [Decision tree](figures/decision-tree.png) · [Correlation heatmap](figures/correlation-heatmap.png)
 
-The tree illustrates the splits of a depth-three classifier fitted on all 792 records. The performance table uses predictions from the five held-out folds. The heatmap shows descriptive Pearson correlations among five driving-style scores and five PID-5 domains.
+For the illustrated tree, a stratified 70/30 split assigned 554 participants to training and 238 to testing. Imputation and tree fitting used the training data. The tree starts with disinhibition, followed by dissociative and risky driving styles. Its ROC-AUC on the held-out test was .566. The table reports mean performance from five-fold cross-validation, which assesses each model across several train/test splits. The heatmap shows descriptive Pearson correlations among five driving-style scores and five PID-5 domains.
 
 ## Evaluation and reproducibility
 
@@ -36,7 +36,7 @@ Each task uses five shared folds, stratified for classification. Mean imputation
 
 The participant data stay in restricted access. The project includes code and aggregate results only. The script regenerates the figures and all tables.
 
-[Classification metrics](results/classification-summary.csv) · [Regression metrics](results/regression-summary.csv)
+[Classification metrics](results/classification-summary.csv) · [70/30 tree test](results/tree-holdout.csv) · [Regression metrics](results/regression-summary.csv)
 
 ## References
 
