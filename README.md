@@ -6,7 +6,7 @@
 
 ## Data and measures
 
-The analysis uses a restricted road-safety research dataset with 792 participant records. Personality was measured with the Personality Inventory for DSM-5 (PID-5). The continuous outcome sums 12 self-reported driving-risk behaviors rated from 1 to 5, for a theoretical range of 12–60. It was observed for 777 participants. The classification outcome is self-reported crash involvement as coded in the source study (135 positives among 792). The classification predictors are five personality domains, five driving-style scores (stress reduction excluded) and the 12 behavior items. The regression predictors are either 25 personality facets or five domains.
+The analysis uses a restricted road-safety research dataset with 792 participant records. Personality was measured with the Personality Inventory for DSM-5 (PID-5), originally developed by Krueger et al. (2012). Sánchez, Montes, and colleagues (2023) later reported on a shortened and modified version for use in Argentina. The continuous outcome sums 12 self-reported driving-risk behaviors rated from 1 to 5, for a theoretical range of 12–60. It was observed for 777 participants. The classification outcome is self-reported crash involvement as coded in the source study (135 positives among 792). The classification predictors are five personality domains, five driving-style scores (stress reduction excluded) and the 12 behavior items. The regression predictors are either 25 personality facets or five domains.
 
 ## What did the models learn?
 
@@ -22,27 +22,23 @@ The analysis uses a restricted road-safety research dataset with 792 participant
 
 The forest reduced error by about **0.10 score points** relative to ordinary linear regression with 25 facets. The mean-only reference had MAE 5.71. Crash involvement was harder to discriminate. The forest and logistic regression differed by about .007 ROC-AUC and .006 AP. The prevalence was .170, a reference for AP. These are descriptive differences from internal validation in a previously explored sample. The crash outcome is retrospective and the analysis does not evaluate prediction of future crashes.
 
-[Original research tree](figures/research-tree.png) · [Original correlation heatmap](figures/research-heatmap.png) · [Tree refitted on the full sample](figures/decision-tree.png)
+[Decision tree](figures/decision-tree.png) · [Correlation heatmap](figures/correlation-heatmap.png)
 
-The original tree uses the 554 development cases from the earlier 70/30 split, with a depth limit of three. Its first split is on disinhibition, followed by dissociative and risky driving styles. The figure is retained to show that original fit, which used the historical imputation procedure. The current full-sample tree illustrates how splits can change when the training sample changes. Neither figure supplies the scores in the table, which come from held-out folds. The heatmap shows descriptive correlations among the five styles and five personality domains.
+The tree illustrates the splits of a depth-three classifier fitted on all 792 records. The performance table uses predictions from the five held-out folds. The heatmap shows descriptive Pearson correlations among five driving-style scores and five PID-5 domains.
 
 ## Evaluation and reproducibility
 
-Each task uses five shared folds, stratified for classification. Mean imputation and scaling, where applicable, are fitted inside the training folds. Model settings were fixed. The classification output also includes Brier score and balanced accuracy at a threshold of 0.5. Fold standard deviations describe variability across folds. The earlier research notebook documented the historical workflow and its correction for imputation before splitting. This portfolio reproduces its corrected predictive sections.
-
-The current classification benchmark uses the 22 predictors in the original research tree across all classifiers. The faculty notebook’s shared-fold comparison used 23 predictors, including stress reduction, so its classification metrics describe a different specification.
+Each task uses five shared folds, stratified for classification. Mean imputation and scaling, where applicable, are fitted inside the training folds. Model settings were fixed. The classification output also includes Brier score and balanced accuracy at a threshold of 0.5. Fold standard deviations describe variability across folds.
 
     python -m pip install -r requirements.txt
     export TRANSITO_CSV_PATH=/path/outside/this/project/authorized.csv
     python analysis.py
 
-The participant data stay in restricted access. The project includes code and aggregate results only. The script regenerates the comparison figure, the full-sample tree and all tables. The two original research figures are archived as supplied.
+The participant data stay in restricted access. The project includes code and aggregate results only. The script regenerates the figures and all tables.
 
 [Classification metrics](results/classification-summary.csv) · [Regression metrics](results/regression-summary.csv)
 
-## Personality measure
-
-Personality Inventory for DSM-5 (PID-5), originally developed by Krueger et al. (2012). Sánchez, Montes, and colleagues (2023) later reported on a shortened and modified version for use in Argentina.
+## References
 
 Krueger, R. F., Derringer, J., Markon, K. E., Watson, D., & Skodol, A. E. (2012). Initial construction of a maladaptive personality trait model and inventory for DSM-5. *Psychological Medicine, 42*(9), 1879–1890. https://doi.org/10.1017/S0033291711002674
 

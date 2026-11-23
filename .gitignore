@@ -1,0 +1,15 @@
+data/
+private/
+*.csv
+!results/*.csv
+*.xlsx
+*.sav
+*.parquet
+*.joblib
+*.pkl
+predictions/
+models/
+.env
+.venv/
+.ipynb_checkpoints/
+__pycache__/

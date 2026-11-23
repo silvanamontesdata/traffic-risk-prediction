@@ -116,6 +116,24 @@ fig.suptitle('How much does model complexity add?', fontsize=16, weight='bold')
 fig.savefig(root / 'figures/model-comparison.png', dpi=170)
 plt.close(fig)
 
+# Descriptive correlation matrix for the same five styles and five domains.
+heatmap_labels = [
+    'Risky', 'Dissociative', 'Aggressive', 'Careful', 'Anxious',
+    'Negative affectivity', 'Detachment', 'Antagonism', 'Disinhibition', 'Psychoticism',
+]
+correlations = df[styles + domains].corr().to_numpy()
+fig, ax = plt.subplots(figsize=(9.1, 7.6), layout='constrained')
+heatmap = ax.imshow(correlations, cmap='coolwarm', vmin=-1, vmax=1)
+ax.set_xticks(range(len(heatmap_labels)), heatmap_labels, rotation=40, ha='right')
+ax.set_yticks(range(len(heatmap_labels)), heatmap_labels)
+ax.set_title('Driving styles and personality domains', loc='left', weight='bold')
+fig.colorbar(heatmap, ax=ax, shrink=.75, label='Pearson correlation')
+for (row, col), value in np.ndenumerate(correlations):
+    ax.text(col, row, f'{value:.2f}', ha='center', va='center',
+            color='white' if abs(value) > .75 else '#192536', fontsize=9)
+fig.savefig(root / 'figures/correlation-heatmap.png', dpi=170)
+plt.close(fig)
+
 # Illustration: refit the same depth-limited classifier on all available rows.
 tree = clone(class_models['Árbol']).fit(Xc, yc).named_steps['model']
 fig, ax = plt.subplots(figsize=(18, 7))
