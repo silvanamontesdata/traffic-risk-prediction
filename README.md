@@ -1,4 +1,4 @@
-# Machine Learning for Human Behavior: Model Comparison with a Road Safety Application
+# Machine Learning for Human Behavior: A Model Comparison in Road Safety
 
 **Do more complex models improve performance on road-safety research data?** This project compares regression baselines with regularized, tree-based and neural-network models under shared cross-validation splits. The two tasks are estimating a self-reported risky-driving score and classifying retrospective reports of crash involvement. **More complex models showed no clear advantage over the linear baselines in this sample.**
 
@@ -22,7 +22,7 @@ The analysis uses a restricted road-safety research dataset with 792 participant
 | Random Forest | .637 ± .042 | .443 ± .062 |
 | Neural network (multilayer perceptron) | .586 ± .036 | .398 ± .022 |
 
-Discrimination was modest. Random Forest had the highest observed mean ROC-AUC (.637), and logistic regression had the highest mean average precision (.446). The difference in ROC-AUC between the two was .012. These are descriptive differences from internal validation. The same dataset had been used in earlier analyses. Crash involvement was reported retrospectively. Predictors and outcomes share a self-report method, which may affect the estimated relationships. The models classify past reports and are intended for research and demonstration purposes. Individual risk assessment and selection are outside their scope.
+Discrimination was modest. Random Forest had the highest observed mean ROC-AUC (.637), and logistic regression had the highest mean average precision (.446). The difference in ROC-AUC between the two was .012. These are descriptive differences from internal validation. The same dataset was used in a prior study (Montes et al., 2026). Crash involvement was reported retrospectively. Predictors and outcomes share a self-report method, which may affect the estimated relationships. The models classify past reports and are intended for research and demonstration purposes. Individual risk assessment and selection are outside their scope.
 
 **How to read AP.** Average precision summarizes how well a model ranks participants with self-reported crash involvement near the top across classification thresholds. It ranges from 0 to 1, with 1 indicating perfect ranking. A constant score gives an AP equal to the positive-class prevalence, about .303 here. Mean AP ranged from .369 to .446, about .07 to .14 above that reference.
 
@@ -74,5 +74,7 @@ The participant data stay in restricted access. The project includes code and ag
 ## References
 
 Krueger, R. F., Derringer, J., Markon, K. E., Watson, D., & Skodol, A. E. (2012). Initial construction of a maladaptive personality trait model and inventory for DSM-5. *Psychological Medicine, 42*(9), 1879–1890. https://doi.org/10.1017/S0033291711002674
+
+Montes, S. A., Trógolo, M. A., & Ledesma, R. D. (2026). Personality correlates of driving styles: A study using the Alternative Model for Personality Disorders (AMPD). *Transportation Research Part F: Traffic Psychology and Behaviour, 122*, Article 103770. https://doi.org/10.1016/j.trf.2026.103770
 
 Sánchez, R. O., Montes, S. A., Galarza, A. L., Somerstein, L. D., & Gainza, M. D. (2023). Una versión reducida y modificada del Inventario de Personalidad para el DSM-5 (PID-5) en la Argentina. *Interdisciplinaria, 40*(1), 115–136. https://doi.org/10.16888/interd.2023.40.1.7
