@@ -1,6 +1,6 @@
-# Machine Learning for Human Behavior: Predicting Risky Driving and Crash Involvement
+# Machine Learning for Human Behavior: Comparing Models in Road Safety
 
-**How much does model complexity add when predicting self-reported driving behavior?** This project applies supervised machine learning to two outcomes in road-safety research. It compares familiar regression baselines with regularized, tree-based and neural-network models under shared cross-validation splits.
+**Do more complex models improve performance on road-safety research data?** This project compares regression baselines with regularized, tree-based and neural-network models under shared cross-validation splits. The two tasks are estimating a self-reported risky-driving score and classifying retrospective reports of crash involvement.
 
 ![Mean cross-validated model performance in the two road-safety tasks](figures/model-comparison.png)
 
@@ -31,6 +31,8 @@ For the illustrated tree, a stratified 70/30 split assigned 554 participants to 
 ## Evaluation and reproducibility
 
 Each task uses five shared folds, stratified for classification. Mean imputation and scaling, where applicable, are fitted inside the training folds. Model settings were fixed. The classification output also includes Brier score and balanced accuracy at a threshold of 0.5. Fold standard deviations describe variability across folds.
+
+Internal cross-validation estimates performance on held-out subsets of the same study sample. External validation would test the models on an independent dataset and was beyond the scope of this analysis.
 
     python -m pip install -r requirements.txt
     export TRANSITO_CSV_PATH=/path/outside/this/project/authorized.csv
